@@ -208,7 +208,7 @@ is_toplevel_scope(x::EXPR) = CSTParser.defines_module(x) || headof(x) === :file
 # f is a function that returns `true` if we want to break early from the loop
 
 iterate_over_ss_methods(b, tls, server, f) = false
-function iterate_over_ss_methods(b::SymbolServer.FunctionStore, tls::Scope, server, f)
+    function iterate_over_ss_methods(b::SymbolServer.FunctionStore, tls::Scope, server, f)
     for m in b.methods
         ret = f(m)
         ret && return true
@@ -237,7 +237,7 @@ function iterate_over_ss_methods(b::SymbolServer.FunctionStore, tls::Scope, serv
     return false
 end
 
-function iterate_over_ss_methods(b::SymbolServer.DataTypeStore, tls::Scope, server, f)
+    function iterate_over_ss_methods(b::SymbolServer.DataTypeStore, tls::Scope, server, f)
     if b.name isa SymbolServer.VarRef
         bname = b.name
     elseif b.name isa SymbolServer.FakeTypeName

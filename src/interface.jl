@@ -1,4 +1,4 @@
-function setup_server(env = dirname(SymbolServer.Pkg.Types.Context().env.project_file), depot = first(SymbolServer.Pkg.depots()), cache = joinpath(dirname(pathof(SymbolServer)), "..", "store"))
+function setup_server(env=dirname(SymbolServer.Pkg.Types.Context().env.project_file), depot=first(SymbolServer.Pkg.depots()), cache=joinpath(dirname(pathof(SymbolServer)), "..", "store"))
     server = StaticLint.FileServer()
     ssi = SymbolServerInstance(depot, cache)
     _, server.symbolserver = SymbolServer.getstore(ssi, env)
@@ -13,7 +13,7 @@ Parse a string and run a semantic pass over it. This will mark scopes, bindings,
 references, and lint hints. An annotated `EXPR` is returned or, if `gethints = true`,
 it is paired with a collected list of errors/hints.
 """
-function lint_string(s::String, server = setup_server(); gethints = false)
+function lint_string(s::String, server=setup_server(); gethints=false)
     empty!(server.files)
     f = StaticLint.File("", s, CSTParser.parse(s, true), nothing, server)
     StaticLint.setroot(f, f)
@@ -36,16 +36,16 @@ in the project will be loaded automatically (calls to `include` with complicated
 are not handled, see `followinclude` for details). A `FileServer` will be returned 
 containing the `File`s of the package.
 """
-function lint_file(rootpath, server = setup_server(); gethints = false)
+function lint_file(rootpath, server=setup_server(); gethints=false)
     empty!(server.files)
     root = StaticLint.loadfile(server, rootpath)
     StaticLint.semantic_pass(root)
-    for (p,f) in server.files
+    for (p, f) in server.files
         StaticLint.check_all(f.cst, StaticLint.LintOptions(), server)
     end
     if gethints
         hints = []
-        for (p,f) in server.files
+        for (p, f) in server.files
             append!(hints, [(x, string(haserror(x) ? LintCodeDescriptions[x.meta.error] : "Missing reference", " at offset ", offset, " of ", p)) for (offset, x) in collect_hints(f.cst, server)])
         end
         return root, hints
